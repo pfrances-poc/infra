@@ -1,0 +1,10 @@
+applications:
+  - name: hello-world-app
+    provider: aws
+    deployer: aws-ecs
+
+environments:
+  - name: production
+    app: hello-world-app
+    cluster: my-cluster
+    region: us-west-2
