@@ -1,0 +1,4 @@
+infra/modules/*/.terraform
+infra/modules/*/.terraform.lock.hcl
+infra/modules/*/terraform.tfstate
+infra/modules/*/terraform.tfstate.backup
