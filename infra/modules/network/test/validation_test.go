@@ -4,10 +4,7 @@ import (
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
-)
-
-const (
-	TERRAFORM_DIR = "../"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
 func TestValidationSuccess(t *testing.T) {
@@ -22,8 +19,10 @@ func TestValidationSuccess(t *testing.T) {
 	for _, varsFile := range varsFileList {
 		t.Run(varsFile, func(t *testing.T) {
 			t.Parallel()
+
+			tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 			terraformOptions := &terraform.Options{
-				TerraformDir: TERRAFORM_DIR,
+				TerraformDir: tempTestFolder,
 				VarFiles: []string{
 					filesFolder + "/" + varsFile,
 				},
@@ -43,13 +42,16 @@ func TestValidationFail(t *testing.T) {
 		"invalid_cidr_1.tfvars",
 		"invalid_cidr_2.tfvars",
 		"invalid_cidr_3.tfvars",
+		"invalid_azs_count.tfvars",
 	}
 
 	for _, varsFile := range varsFileList {
 		t.Run(varsFile, func(t *testing.T) {
 			t.Parallel()
+
+			tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 			terraformOptions := &terraform.Options{
-				TerraformDir: TERRAFORM_DIR,
+				TerraformDir: tempTestFolder,
 				VarFiles: []string{
 					filesFolder + "/" + varsFile,
 				},
