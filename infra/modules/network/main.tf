@@ -1,6 +1,9 @@
-data "aws_availability_zones" "available" {
-  state  = "available"
+provider "aws" {
   region = var.region
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
 locals {
@@ -45,6 +48,11 @@ resource "aws_subnet" "public" {
   availability_zone = each.key
 
   lifecycle {
+    precondition {
+      condition     = length(data.aws_availability_zones.available.names) >= var.azs_count
+      error_message = "Not enough availability zones available in region ${var.region}. Required: ${var.azs_count}, Available: ${length(data.aws_availability_zones.available.names)}."
+    }
+
     precondition {
       condition     = can(cidrsubnet(var.cidr_block, local.subnet_bits, index(local.azs, each.key)))
       error_message = "Invalid CIDR block for subnet in availability zone ${each.key}."

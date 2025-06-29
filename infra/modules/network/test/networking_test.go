@@ -4,14 +4,15 @@ import (
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	testStructure "github.com/gruntwork-io/terratest/modules/test-structure"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
 func TestVPCSingleAZ(t *testing.T) {
 	t.Parallel()
 
+	tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 	terraformOptions := &terraform.Options{
-		TerraformDir: TERRAFORM_DIR,
+		TerraformDir: tempTestFolder,
 		Vars: map[string]any{
 			"cidr_block":       "10.0.0.0/16",
 			"name":             "test-vpc-single-az",
@@ -22,19 +23,17 @@ func TestVPCSingleAZ(t *testing.T) {
 		},
 	}
 
-	defer testStructure.RunTestStage(t, "cleanup", func() {
+	defer test_structure.RunTestStage(t, "cleanup", func() {
 		terraform.Destroy(t, terraformOptions)
 	})
 
-	testStructure.RunTestStage(t, "plan", func() {
+	test_structure.RunTestStage(t, "plan", func() {
 		terraform.InitAndPlan(t, terraformOptions)
 	})
 
-	testStructure.RunTestStage(t, "apply", func() {
-		terraform.InitAndApply(t, terraformOptions)
-	})
+	test_structure.RunTestStage(t, "apply", func() {
+		terraform.Apply(t, terraformOptions)
 
-	testStructure.RunTestStage(t, "validate", func() {
 		vpc_id := terraform.Output(t, terraformOptions, "vpc_id")
 		if vpc_id == "" {
 			t.Fatal("Expected VPC ID to be non-empty")
@@ -42,7 +41,7 @@ func TestVPCSingleAZ(t *testing.T) {
 
 		subnet_cidrs := terraform.OutputList(t, terraformOptions, "subnet_cidr_blocks")
 		if len(subnet_cidrs) != 1 {
-			t.Fatalf("Expected 1 subnet CIDR, got %d", len(subnet_cidrs))
+			t.Fatalf("Expected 1 subnet CIDR, got %d\n%+v", len(subnet_cidrs), subnet_cidrs)
 		}
 
 		subnet_cidr := subnet_cidrs[0]
@@ -56,8 +55,9 @@ func TestVPCSingleAZ(t *testing.T) {
 func TestVPCThreeAZs(t *testing.T) {
 	t.Parallel()
 
+	tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 	terraformOptions := &terraform.Options{
-		TerraformDir: TERRAFORM_DIR,
+		TerraformDir: tempTestFolder,
 		Vars: map[string]any{
 			"cidr_block":       "20.0.0.0/16",
 			"name":             "test-vpc-three-azs",
@@ -68,19 +68,17 @@ func TestVPCThreeAZs(t *testing.T) {
 		},
 	}
 
-	defer testStructure.RunTestStage(t, "cleanup", func() {
+	defer test_structure.RunTestStage(t, "cleanup", func() {
 		terraform.Destroy(t, terraformOptions)
 	})
 
-	testStructure.RunTestStage(t, "plan", func() {
+	test_structure.RunTestStage(t, "plan", func() {
 		terraform.InitAndPlan(t, terraformOptions)
 	})
 
-	testStructure.RunTestStage(t, "apply", func() {
-		terraform.InitAndApply(t, terraformOptions)
-	})
+	test_structure.RunTestStage(t, "apply", func() {
+		terraform.Apply(t, terraformOptions)
 
-	testStructure.RunTestStage(t, "validate", func() {
 		vpc_id := terraform.Output(t, terraformOptions, "vpc_id")
 		if vpc_id == "" {
 			t.Fatal("Expected VPC ID to be non-empty")
@@ -90,7 +88,6 @@ func TestVPCThreeAZs(t *testing.T) {
 		if len(subnet_cidrs) != 3 {
 			t.Fatalf("Expected 1 subnet CIDR, got %d", len(subnet_cidrs))
 		}
-
 		firstSubnetCidr := subnet_cidrs[0]
 		secondSubnetCidr := subnet_cidrs[1]
 		thirdSubnetCidr := subnet_cidrs[2]
@@ -110,5 +107,4 @@ func TestVPCThreeAZs(t *testing.T) {
 			t.Fatalf("Expected third subnet CIDR to be %s, got %s", expectedThirdCidr, thirdSubnetCidr)
 		}
 	})
-
 }
