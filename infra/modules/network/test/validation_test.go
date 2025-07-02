@@ -22,7 +22,8 @@ func TestValidationSuccess(t *testing.T) {
 
 			tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 			terraformOptions := &terraform.Options{
-				TerraformDir: tempTestFolder,
+				TerraformBinary: TERRAFORM_BINARY,
+				TerraformDir:    tempTestFolder,
 				VarFiles: []string{
 					filesFolder + "/" + varsFile,
 				},
@@ -51,7 +52,8 @@ func TestValidationFail(t *testing.T) {
 
 			tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 			terraformOptions := &terraform.Options{
-				TerraformDir: tempTestFolder,
+				TerraformBinary: TERRAFORM_BINARY,
+				TerraformDir:    tempTestFolder,
 				VarFiles: []string{
 					filesFolder + "/" + varsFile,
 				},

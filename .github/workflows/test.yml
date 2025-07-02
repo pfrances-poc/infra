@@ -33,7 +33,7 @@ jobs:
       - name: "run integration tests"
         if: ${{ github.event_name == 'merge_group' }}
         run: |
-          go test -run VPC -v ./... -timeout=60m
+          make tests
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

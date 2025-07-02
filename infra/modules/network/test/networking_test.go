@@ -12,7 +12,8 @@ func TestVPCSingleAZ(t *testing.T) {
 
 	tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 	terraformOptions := &terraform.Options{
-		TerraformDir: tempTestFolder,
+		TerraformBinary: TERRAFORM_BINARY,
+		TerraformDir:    tempTestFolder,
 		Vars: map[string]any{
 			"cidr_block":       "10.0.0.0/16",
 			"name":             "test-vpc-single-az",
@@ -57,7 +58,8 @@ func TestVPCThreeAZs(t *testing.T) {
 
 	tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, ROOT_FOLDER, MODULE_FOLDER)
 	terraformOptions := &terraform.Options{
-		TerraformDir: tempTestFolder,
+		TerraformBinary: TERRAFORM_BINARY,
+		TerraformDir:    tempTestFolder,
 		Vars: map[string]any{
 			"cidr_block":       "20.0.0.0/16",
 			"name":             "test-vpc-three-azs",
